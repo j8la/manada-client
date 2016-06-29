@@ -1,0 +1,31 @@
+- var date = new Date(status.sdate);
+div(class="table")
+	table
+		tbody
+			tr
+				td(style="text-align: right;") Service started at
+				td #{date}
+			tr
+				td(style="text-align: right;") Service uptime
+				td #{status.suptime} s
+			tr
+				td(style="text-align: right;") Hostname
+				td #{status.hostname}
+			tr
+				td(style="text-align: right;") System
+				td #{status.system}
+			tr
+				td(style="text-align: right;") Version
+				td #{status.version}
+			tr
+				td(style="text-align: right;") Arch
+				td #{status.arch}
+			tr
+				td(style="text-align: right;") System uptime
+				td #{status.ouptime} s
+			tr
+				td(style="text-align: right;") Checksum
+				td #{status.checksum}
+			tr
+				td(style="text-align: right;") Isolated
+				td #{status.isolated}

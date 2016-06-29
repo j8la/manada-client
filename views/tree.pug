@@ -1,0 +1,53 @@
+- if(size)
+    | #{size}
+- if(!size)
+    div(id="jstree")
+        script.
+            $('#jstree').jstree({ 
+                'core' : {
+                    'multiple' : false,
+                    'data' : !{JSON.stringify(tree)}
+                }
+            });
+
+            $('#jstree').on('changed.jstree', function (e, data1) {
+
+                var i, j, nodeText = [], nodeId = [], path;
+
+                for(i = 0, j = data1.selected.length; i < j; i++) {
+                    nodeText.push(data1.instance.get_node(data1.selected[i]).text);
+                    nodeId.push(data1.instance.get_node(data1.selected[i]).id);
+                }
+
+                nodeText    = nodeText.join(', ');
+                nodeId      = nodeId.join(', ');
+                path        = nodeId.split('_');
+
+                $('#content').html('<div id="header-content">' + nodeText + '</div>');
+                
+                switch(nodeText) {
+                    case "Status":
+                        $.ajax({url: "/status/" + path[1], cache: false}).done(function(data2, status) {
+                	        $("#content").append(data2);
+                        }).fail(function(err){
+                	        $("#content").html('<br><img src="img/err.png">&nbsp;Can\'t get datas!');
+                        });
+                        break;
+                    case "Log":
+                        $.ajax({url: "/log/" + path[1], cache: false}).done(function(data2, status) {
+                	        $("#content").append(data2);
+                        }).fail(function(err){
+                	        $("#content").html('<br><img src="img/err.png">&nbsp;Can\'t get datas!');
+                        });
+                        break;
+                    case "Store":
+                        $.ajax({url: "/store/" + path[1], cache: false}).done(function(data2, status) {
+                	        $("#content").append(data2);
+                        }).fail(function(err){
+                	        $("#content").html('<br><img src="img/err.png">&nbsp;Can\'t get datas!');
+                        });
+                        break;
+                }
+                
+
+            }).jstree();

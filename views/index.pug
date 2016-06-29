@@ -1,0 +1,34 @@
+doctype html
+html
+    head
+        title!= title
+        link(type='text/css' href='css/manada.css', rel='stylesheet')
+        link(type='text/css' href='js/themes/default/style.css', rel='stylesheet')
+        link(type='text/css' href='css/jquery.json-view.css', rel='stylesheet')
+        script(type='text/javascript' src='js/jquery-3.0.0.min.js')
+        script(type='text/javascript' src='js/jstree.min.js')
+        script(type='text/javascript' src='js/jquery.json-view.js')
+    body
+        div(id="page")
+            div(id="column")
+                div(id="header")
+                    a(href="/logout") [ Logout ]&nbsp;&nbsp;&nbsp;&nbsp;
+                div(id="column_content")
+                    script.
+                        var size = 0;
+                        (function updateTree() {
+                            $.ajax({url: "/tree/size", cache: false}).done(function(data1, status) {
+                                if(size != data1) {
+                                    $.ajax({url: "/tree/refresh", cache: false}).done(function(data2, status) {
+                                        $("#column_content").html(data2);
+                                        size = data1;
+                                    }).fail(function(err){
+                                        $("#column_content").html('<br><img src="img/warn.png">&nbsp;Can\'t refresh!');
+                                    });
+                                }
+                            }).fail(function(err){
+                                $("#column_content").html('<br><img src="img/err.png">&nbsp;Not responding!');
+                            });
+                            setTimeout(updateTree, 1000);
+                        }());
+            div(id="content")

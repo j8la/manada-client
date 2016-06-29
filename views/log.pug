@@ -1,0 +1,17 @@
+div(class="table")
+    table
+        tbody
+            - for(var entry in log)
+                tr
+                    - if(log[entry].type == "ERR")
+                        td(style="color: #FF5656;") #{new Date(log[entry].date)}
+                        td(style="color: #FF5656;") #{log[entry].type}
+                        td(style="color: #FF5656") #{log[entry].msg}
+                    - if(log[entry].type == "WAR")
+                        td(style="color: #BC9A00;") #{new Date(log[entry].date)}
+                        td(style="color: #BC9A00;") #{log[entry].type}
+                        td(style="color: #BC9A00") #{log[entry].msg}
+                    - if(log[entry].type == "NFO")
+                        td(style="color: #404040;") #{new Date(log[entry].date)}
+                        td(style="color: #404040;") #{log[entry].type}
+                        td(style="color: #404040") #{log[entry].msg}
