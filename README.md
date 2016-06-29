@@ -4,7 +4,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/j8la/manada-client.svg)](https://github.com/j8la/manada-client/issues)
 [![Docker Stars](https://img.shields.io/docker/pulls/jbla/manada.io.clt.svg)](https://hub.docker.com/r/jbla/manada.io.clt/)
 [![GitHub license](https://img.shields.io/badge/license-AGPL-red.svg)](https://raw.githubusercontent.com/j8la/manada-client/master/LICENSE)
-=====
+
 Manada Client is a web client, provided as a container, that is used to manage Manada containers and their store.
 
 ### Howto
@@ -27,3 +27,13 @@ docker run -d --net=weave -p 8080:8080 jbla/manada.io.clt [ID]
 ```
 
 [Check the documentation for more informations.](https://github.com/j8la/manada/wiki)
+
+=====
+
+Copyright (c) 2016 Manada Client by Julien Blanc
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/
