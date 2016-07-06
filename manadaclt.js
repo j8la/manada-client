@@ -397,6 +397,13 @@ appl.all('*', function(req, res) {
 });
 
 
+//----------------------------------------- PROCESS EVENTS
+process.on('SIGTERM', function() {
+    htds.stop();
+    process.exit(0);
+});
+
+
 //----------------------------------------- GO!!
 
 //----------- DISCOVERY
