@@ -29,6 +29,7 @@ You can access the web client on https://host:8080/ and must use credentials pro
 - Automatic discovery and dynamic tree menu
 - Access to Manada instances in isolated network with one published port
 - Access to status, logs, store
+- Search a value by key
 - Full proxyfied Rest API request via Store menu, no direct access from browser
 - Multi-session
 

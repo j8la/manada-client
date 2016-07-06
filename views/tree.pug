@@ -30,21 +30,28 @@
                         $.ajax({url: "/status/" + path[1], cache: false}).done(function(data2, status) {
                 	        $("#content").append(data2);
                         }).fail(function(err){
-                	        $("#content").html('<br><img src="img/err.png">&nbsp;Can\'t get datas!');
+                	        $("#content").html('<br><img src="img/err.png" alt="/!\ ">&nbsp;Can\'t get datas!');
                         });
                         break;
                     case "Log":
                         $.ajax({url: "/log/" + path[1], cache: false}).done(function(data2, status) {
                 	        $("#content").append(data2);
                         }).fail(function(err){
-                	        $("#content").html('<br><img src="img/err.png">&nbsp;Can\'t get datas!');
+                	        $("#content").html('<br><img src="img/err.png" alt="/!\ ">&nbsp;Can\'t get datas!');
                         });
                         break;
                     case "Store":
                         $.ajax({url: "/store/" + path[1], cache: false}).done(function(data2, status) {
                 	        $("#content").append(data2);
                         }).fail(function(err){
-                	        $("#content").html('<br><img src="img/err.png">&nbsp;Can\'t get datas!');
+                	        $("#content").html('<br><img src="img/err.png" alt="/!\ ">&nbsp;Can\'t get datas!');
+                        });
+                        break;
+                    case "Search":
+                        $.ajax({url: "/search/" + path[1], cache: false}).done(function(data2, status) {
+                	        $("#content").append(data2);
+                        }).fail(function(err){
+                	        $("#content").html('<br><img src="img/err.png" alt="/!\ ">&nbsp;Can\'t get datas!');
                         });
                         break;
                 }

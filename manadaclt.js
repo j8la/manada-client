@@ -1,7 +1,7 @@
 /*
 Name    : manadaclt.js
 Author  : Julien Blanc
-Version : 0.7.0
+Version : 0.9.0
 Date    : 29/06/2016
 NodeJS  : 6.2.2
 */
@@ -50,7 +50,7 @@ var hstd    = require('./host-discovery-clt.js');
 
 //----------------------------------------- ARGUMENTS
 var parser = new argp({
-    version: '0.7.0',
+    version: '0.9.0',
     addHelp: true,
     description: 'Manada Client.'
 })
@@ -199,117 +199,165 @@ appl.get('/logout', function(req,res) {
 
 //----------- jsTree management
 appl.get('/tree/:func', function(req,res) {
+    if(req.xhr) {
+        var json = htds.hosts();
+        var addr = [];
 
-    var json = htds.hosts();
-    var addr = [];
+        for(var val in json) {
+            addr.push(json[val].address);
+        }
 
-    for(var val in json) {
-    	addr.push(json[val].address);
-    }
+        switch(req.params.func) {
+            case "refresh" :
 
-    switch(req.params.func) {
-        case "refresh" :
+                var jsonTree = [];
+                var asyncTasks = [];
 
-            var jsonTree = [];
-            var asyncTasks = [];
+                jsonTree.push({ id: "root", parent: "#", text: args.cluster, icon: "./img/cluster.png", state: { opened: true }});
 
-            jsonTree.push({ id: "root", parent: "#", text: args.cluster, icon: "./img/cluster.png", state: { opened: true }});
-
-            addr.forEach(function(item) {
-                asyncTasks.push(function(callback) {
-                    recl[req.session.id].f.get("https://" + item + ":8000/api/status", function(data,res) {
-                        if(res.statusCode == 401) {
-                            jsonTree.push({ id: "root_" + item, parent: "root", text: item, icon: "./img/host_warn.png"});
-                        } else {
-                            jsonTree.push({ id: "root_" + item, parent: "root", text: item, icon: "./img/host.png", state: { opened: true } });
-                            jsonTree.push({ id: "root_" + item + "_Status", parent: "root_" + item, text: "Status", icon: "./img/status.png"});
-                            jsonTree.push({ id: "root_" + item + "_Log", parent: "root_" + item, text: "Log", icon: "./img/log.png"});
-                            jsonTree.push({ id: "root_" + item + "_Store", parent: "root_" + item, text: "Store", icon: "./img/store.png"});
-                        }
-                        callback();
-                    }).on('error', function(err) { 
-                        jsonTree.push({ id: "root_" + item, parent: "root", text: item, icon: "./img/host_err.png"}); 
+                addr.forEach(function(item) {
+                    asyncTasks.push(function(callback) {
+                        recl[req.session.id].f.get("https://" + item + ":8000/api/v2/status", function(data,res) {
+                            if(res.statusCode == 401) {
+                                jsonTree.push({ id: "root_" + item, parent: "root", text: item, icon: "./img/host_warn.png"});
+                            } else {
+                                jsonTree.push({ id: "root_" + item, parent: "root", text: item, icon: "./img/host.png", state: { opened: true } });
+                                jsonTree.push({ id: "root_" + item + "_Status", parent: "root_" + item, text: "Status", icon: "./img/status.png"});
+                                jsonTree.push({ id: "root_" + item + "_Log", parent: "root_" + item, text: "Log", icon: "./img/log.png"});
+                                jsonTree.push({ id: "root_" + item + "_Store", parent: "root_" + item, text: "Store", icon: "./img/store.png"});
+                                jsonTree.push({ id: "root_" + item + "_Search", parent: "root_" + item, text: "Search", icon: "./img/search.png"});
+                            }
+                            callback();
+                        }).on('error', function(err) { 
+                            jsonTree.push({ id: "root_" + item, parent: "root", text: item, icon: "./img/host_err.png"}); 
+                        });
                     });
                 });
-            });
 
-            asyn.parallel(asyncTasks, function() {
-                res.render('tree', { 
-                    tree: jsonTree.sort(sortByProperty('id'))
+                asyn.parallel(asyncTasks, function() {
+                    res.render('tree', { 
+                        tree: jsonTree.sort(sortByProperty('id'))
+                    });
                 });
-            });
 
-            break;
+                break;
 
-        case "size":
+            case "size":
 
-            res.render('tree', { 
-                size: addr.length
-            });
+                res.render('tree', { 
+                    size: addr.length
+                });
 
-            break;
+                break;
 
+        }
+    } else {
+        res1.redirect('/');
     }
-
 });
 
 
 //----------- Status
 appl.get('/status/:ip', function(req,res1) {
-
-    recl[req.session.id].f.get("https://" + req.params.ip + ":8000/api/status", function(data,res2) {
-    	if(res2.statusCode == 401) {
-            res1.render('status', { status: "Unauthorized" });
-    	} else {
-        	res1.render('status', { status: data });
-        }
-	}).on('error', function(err) { 
-    	res1.render('status', { status: req.params.ip + " not responding!" });
-    });
-
+    if(req.xhr) {
+        recl[req.session.id].f.get("https://" + req.params.ip + ":8000/api/v2/status", function(data,res2) {
+            if(res2.statusCode == 401) {
+                res1.render('status', { status: "Unauthorized" });
+            } else {
+                res1.render('status', { status: data });
+            }
+        }).on('error', function(err) { 
+            res1.render('status', { status: req.params.ip + " not responding!" });
+        });
+    } else {
+        res1.redirect('/');
+    }
 });
 
 
 //----------- Log
 appl.get('/log/:ip', function(req,res1) {
-
-    recl[req.session.id].f.get("https://" + req.params.ip + ":8000/api/log", function(data,res2) {
-    	if(res2.statusCode == 401) {
-            res1.render('log', { log: "Unauthorized" });
-    	} else {
-        	res1.render('log', { log: data });
-        }
-	}).on('error', function(err) { 
-    	res1.render('log', { log: req.params.ip + " not responding!" });
-    });
-
+    if(req.xhr) {
+        recl[req.session.id].f.get("https://" + req.params.ip + ":8000/api/v2/log", function(data,res2) {
+            if(res2.statusCode == 401) {
+                res1.render('log', { log: "Unauthorized" });
+            } else {
+                res1.render('log', { log: data });
+            }
+        }).on('error', function(err) { 
+            res1.render('log', { log: req.params.ip + " not responding!" });
+        });
+    } else {
+        res1.redirect('/');
+    }
 });
 
 
 //----------- Store
 appl.get('/store/:ip', function(req,res1) {
+    if(req.xhr) {
+        recl[req.session.id].f.get("https://" + req.params.ip + ":8000/api/v2/store", function(data,res2) {
+            if(res2.statusCode == 401) {
+                res1.render('store', { store: "Unauthorized" });
+            } else {
+                res1.render('store', { ip: req.params.ip, store: data });
+            }
+        }).on('error', function(err) { 
+            res1.render('store', { store: req.params.ip + " not responding!" });
+        });
+    } else {
+        res1.redirect('/');
+    }
+});
 
-    recl[req.session.id].f.get("https://" + req.params.ip + ":8000/api/store", function(data,res2) {
-    	if(res2.statusCode == 401) {
-            res1.render('store', { store: "Unauthorized" });
-    	} else {
-            res1.render('store', { ip: req.params.ip, store: data });
+//----------- Search
+appl.get('/search/:ip', function(req,res1) {
+    if(req.xhr) {
+        res1.render('search', { ip: req.params.ip });
+    } else {
+        res1.redirect('/');
+    }
+});
+
+appl.post('/search', function(req, res1) {
+    recl[req.session.id].f.get(req.body.url, function(data1,res2) {
+        if(res2.statusCode !== 200) {
+            res1.render('result', { statusCode: res2.statusCode, store: [] });
+        } else {
+            if(data1.length == 0 ) {
+                res1.render('result', { statusCode: 404, store: [] });
+            } else {
+                res1.render('result', { statusCode: res2.statusCode, store: data1 });
+            }
+            
         }
-	}).on('error', function(err) { 
-    	res1.render('store', { store: req.params.ip + " not responding!" });
     });
-
 });
 
 
-//----------- Write to store
+//----------- Store operations
 appl.post('/store', function(req, res1) {
 
     switch(req.body.method) {
+        case "GET":
+            recl[req.session.id].f.get(req.body.url, function(data1,res2) {
+                if(res2.statusCode !== 200) {
+                    res1.render('result', { statusCode: res2.statusCode, store: null });
+                } else {
+                    res1.render('result', { statusCode: res2.statusCode, store: data1 });
+                }
+            });
+
+            break;
 
         case "POST":
-            recl[req.session.id].f.post(req.body.url, function(data1,res2) {
-                recl[req.session.id].f.get("https://" + req.body.ip + ":8000/api/store", function(data2,res3) {
+            var args = {
+                data: req.body.data,
+                headers: { "Content-Type": "application/json" }
+            }
+
+            recl[req.session.id].f.post(req.body.url, args, function(data1,res2) {
+                recl[req.session.id].f.get("https://" + req.body.ip + ":8000/api/v2/store", function(data2,res3) {
                     res1.render('result', { statusCode: res2.statusCode, store: data2 });
                 });
             });
@@ -318,14 +366,12 @@ appl.post('/store', function(req, res1) {
 
         case "PUT":
             var args = {
-                data: {
-                    value: req.body.data
-                },
+                data: req.body.data,
                 headers: { "Content-Type": "application/json" }
             }
 
             recl[req.session.id].f.put(req.body.url, args, function(data1,res2) {
-                recl[req.session.id].f.get("https://" + req.body.ip + ":8000/api/store", function(data2,res3) {
+                recl[req.session.id].f.get("https://" + req.body.ip + ":8000/api/v2/store", function(data2,res3) {
                     res1.render('result', { statusCode: res2.statusCode, store: data2 });
                 });
             });
@@ -334,7 +380,7 @@ appl.post('/store', function(req, res1) {
 
         case "DELETE":
             recl[req.session.id].f.delete(req.body.url, function(data1,res2) {
-                recl[req.session.id].f.get("https://" + req.body.ip + ":8000/api/store", function(data2,res3) {
+                recl[req.session.id].f.get("https://" + req.body.ip + ":8000/api/v2/store", function(data2,res3) {
                     res1.render('result', { statusCode: res2.statusCode, store: data2 });
                 });
             });
@@ -343,6 +389,13 @@ appl.post('/store', function(req, res1) {
     }
 
 });
+
+
+//----------- Redirect unmatched routes
+appl.all('*', function(req, res) {
+  res.redirect("/");
+});
+
 
 //----------------------------------------- GO!!
 

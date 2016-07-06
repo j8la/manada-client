@@ -1,27 +1,37 @@
 div(style="text-align: left; border-bottom: 1px dotted #404040;")
     script.
+        $("#url").removeAttr('disabled');
         $("#data").attr('disabled','disabled');
+
         $("#method").change(function() {
             switch($(this).val()) {
-                case "POST":
+                case "GET":
+                    $("#url").removeAttr('disabled');
                     $("#data").attr('disabled','disabled');
                     break;
+                case "POST":
+                    $("#url").attr('disabled','disabled');
+                    $("#data").removeAttr('disabled');
+                    break;
                 case "PUT":
+                    $("#url").attr('disabled','disabled');
                     $("#data").removeAttr('disabled');
                     break;
                 case "DELETE":
+                    $("#url").removeAttr('disabled');
                     $("#data").attr('disabled','disabled');
                     break;
             }
         });
+
         $("#button").click(function() {
 
             var method = $("#method").val();
             var url = $("#url").val();
             var data = $("#data").val();
 
-            url = url.replace('https://#{ip}:8000/api/store',''); 
-            url = "https://#{ip}:8000/api/store" + url;
+            url = url.replace('https://#{ip}:8000/api/v2/store',''); 
+            url = "https://#{ip}:8000/api/v2/store" + url;
 
             var exp = {};
 
@@ -40,6 +50,9 @@ div(style="text-align: left; border-bottom: 1px dotted #404040;")
                 var obj = JSON.parse(data);
 
                 switch(obj.statusCode) {
+                    case '400':
+                        obj.statusCode = '<span style="color:#FF7070;">' + obj.statusCode + ' (Bad request)</span>';
+                        break;
                     case '401':
                         obj.statusCode = '<span style="color:#FF7070;">' + obj.statusCode + ' (Unauthorized)</span>';
                         break;
@@ -49,11 +62,14 @@ div(style="text-align: left; border-bottom: 1px dotted #404040;")
                     case '409':
                         obj.statusCode = '<span style="color:#FF7070;">' + obj.statusCode + ' (Conflict)</span>';
                         break;
+                    case '200':
+                        obj.statusCode = '<span style="color:#008E10;">' + obj.statusCode + ' (OK)</span>';
+                        break;
                     case '201':
                         obj.statusCode = '<span style="color:#008E10;">' + obj.statusCode + ' (Created)</span>';
                         break;
-                    case '200':
-                        obj.statusCode = '<span style="color:#008E10;">' + obj.statusCode + ' (OK)</span>';
+                    case '500':
+                        obj.statusCode = '<span style="color:#008E10;">' + obj.statusCode + ' (Server error)</span>';
                         break;
                 }
 
@@ -69,23 +85,56 @@ div(style="text-align: left; border-bottom: 1px dotted #404040;")
             });
 
         });
+
+        function enableTab(id) {
+
+            var el = document.getElementById(id);
+
+            el.onkeydown = function(e) {
+
+                if (e.keyCode === 9) { // tab was pressed
+
+                    // get caret position/selection
+                    var val = this.value,
+                    start = this.selectionStart,
+                    end = this.selectionEnd;
+
+                    // set textarea value to: text before caret + tab + text after caret
+                    this.value = val.substring(0, start) + '\t' + val.substring(end);
+
+                    // put caret at right position again
+                    this.selectionStart = this.selectionEnd = start + 1;
+
+                    // prevent the focus lose
+                    return false;
+
+                }
+
+            };
+
+        }
+
+        $('#data').numberedtextarea({
+            allowTabChar: true,  // If true Tab key creates indentation
+        });
+
     | Request :
     br
     select(id="method" name="type" style="width: 80px;font-family: quicksand;")
+        option(value="GET") GET
         option(value="POST") POST
         option(value="PUT") PUT
         option(value="DELETE") DELETE
     br
     br
-    | https://#{ip}:8000/api/store : 
+    | https://#{ip}:8000/api/v2/store : 
     br
     input(id="url" type="text" name="url" style="width: 250px;font-family: quicksand;")
     br
     br
     | Data : 
     br
-    input(id="data" type="text" name="data" style="width: 250px;font-family: quicksand;")
-    br
+    textarea(id="data" type="text" name="data" style="width: 255px; min-width: 255px; height: 100px; min-height: 100px;")   
     br
     input(id="button" type="submit" value="Execute" style="font-family: quicksand;")
     br

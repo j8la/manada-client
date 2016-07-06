@@ -1,0 +1,62 @@
+div(style="text-align: left; border-bottom: 1px dotted #404040; padding-bottom: 10px;")
+    script.
+        $("#jsonTree").html('');
+        $("#button").click(function() {
+
+            var exp = {};
+
+            exp.url = "https://#{ip}:8000/api/v2/search/" + $("#search").val();
+
+            $.ajax({
+                url: "/search",  
+                type: 'POST',
+                data: JSON.stringify(exp),
+                contentType: 'application/json'
+            }).done(function(data, status) {
+
+                var obj = JSON.parse(data);
+
+                switch(obj.statusCode) {
+                    case '400':
+                        obj.statusCode = '<span style="color:#FF7070;">' + obj.statusCode + ' (Bad request)</span>';
+                        break;
+                    case '401':
+                        obj.statusCode = '<span style="color:#FF7070;">' + obj.statusCode + ' (Unauthorized)</span>';
+                        break;
+                    case '404':
+                        obj.statusCode = '<span style="color:#FF7070;">' + obj.statusCode + ' (Not found)</span>';
+                        break;
+                    case '409':
+                        obj.statusCode = '<span style="color:#FF7070;">' + obj.statusCode + ' (Conflict)</span>';
+                        break;
+                    case '200':
+                        obj.statusCode = '<span style="color:#008E10;">' + obj.statusCode + ' (OK)</span>';
+                        break;
+                    case '201':
+                        obj.statusCode = '<span style="color:#008E10;">' + obj.statusCode + ' (Created)</span>';
+                        break;
+                    case '500':
+                        obj.statusCode = '<span style="color:#008E10;">' + obj.statusCode + ' (Server error)</span>';
+                        break;
+                }
+
+                $("#status").html("<p>Status: " + obj.statusCode + '</p>');
+                $("#jsonTree").html('');
+                $("#jsonTree").jsonView(obj.store);
+
+                $("#search").val('');
+
+            }).fail(function(err){
+
+            });
+
+        });
+
+    input(id="search" type="text" name="search" style="width: 250px;font-family: quicksand;")
+    input(id="button" type="submit" value="Search key" style="font-family: quicksand;")
+
+div(id="status")
+div(id="jsonTree")
+    br
+    script.
+        $("#jsonTree").jsonView(!{JSON.stringify(store)})

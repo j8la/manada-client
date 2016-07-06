@@ -5,9 +5,11 @@ html
         link(type='text/css' href='css/manada.css', rel='stylesheet')
         link(type='text/css' href='js/themes/default/style.css', rel='stylesheet')
         link(type='text/css' href='css/jquery.json-view.css', rel='stylesheet')
+        link(type='text/css' href='css/jquery.numberedtextarea.css', rel='stylesheet')
         script(type='text/javascript' src='js/jquery-3.0.0.min.js')
         script(type='text/javascript' src='js/jstree.min.js')
         script(type='text/javascript' src='js/jquery.json-view.js')
+        script(type='text/javascript' src='js/jquery.numberedtextarea.js')
     body
         div(id="page")
             div(id="column")
@@ -23,11 +25,11 @@ html
                                         $("#column_content").html(data2);
                                         size = data1;
                                     }).fail(function(err){
-                                        $("#column_content").html('<br><img src="img/warn.png">&nbsp;Can\'t refresh!');
+                                        $("#column_content").html('<br><img src="img/warn.png" alt="/!\ ">&nbsp;Can\'t refresh!');
                                     });
                                 }
                             }).fail(function(err){
-                                $("#column_content").html('<br><img src="img/err.png">&nbsp;Not responding!');
+                                $("#column_content").html('<br><img src="img/err.png" alt="/!\ ">&nbsp;Not responding!');
                             });
                             setTimeout(updateTree, 1000);
                         }());
