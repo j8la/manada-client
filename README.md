@@ -36,23 +36,27 @@ You can access the web client on https://host:8080/ and must use credentials pro
 ### Screens
 Prompt | 
 -------|
-![](http://files.gandi.ws/gandi76242/image/capture00.png) |
+![http://files.gandi.ws/gandi76242/image/prompt.png](http://files.gandi.ws/gandi76242/image/prompt.png) |
 
 Log |
 ----|
-![http://files.gandi.ws/gandi76242/image/capture00.png](http://files.gandi.ws/gandi76242/image/capture01b.png) |
+![http://files.gandi.ws/gandi76242/image/log.png](http://files.gandi.ws/gandi76242/image/log.png) |
 
 Status |
 -------|
-![http://files.gandi.ws/gandi76242/image/capture00.png](http://files.gandi.ws/gandi76242/image/capture02b.png) |
+![http://files.gandi.ws/gandi76242/image/status.png](http://files.gandi.ws/gandi76242/image/status.png) |
+
+Search |
+-------|
+![http://files.gandi.ws/gandi76242/image/search.png](http://files.gandi.ws/gandi76242/image/search.png) |
 
 Manage store |
 -------------|
-![http://files.gandi.ws/gandi76242/image/capture00.png](http://files.gandi.ws/gandi76242/image/capture03b.png) |
+![http://files.gandi.ws/gandi76242/image/store.png](http://files.gandi.ws/gandi76242/image/store.png) |
 
 Bad credentials |
 ----------------|
-![http://files.gandi.ws/gandi76242/image/capture00.png](http://files.gandi.ws/gandi76242/image/capture04b.png) |
+![http://files.gandi.ws/gandi76242/image/badpasswd.png](http://files.gandi.ws/gandi76242/image/badpasswd.png) |
 
 [Check the documentation for more informations.](https://github.com/j8la/manada/wiki)
 
